@@ -1,0 +1,21 @@
+{
+  "name": "practice",
+  "version": "1.0.0",
+  "description": "sample project",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon index.js"
+  },
+  "author": "danilo b santos II",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "simple-git": "^1.126.0",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "env": "0.0.2",
+    "nodemon": "^2.0.1"
+  }
+}
