@@ -9,8 +9,13 @@
   "author": "danilo b santos II",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "mysql2": "^2.0.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.2",
     "simple-git": "^1.126.0",
     "uuid": "^3.3.3"
   },

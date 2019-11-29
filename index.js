@@ -1,16 +1,145 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const port = process.env.port || 5000;
-app.set('view-engine', 'ejs');
+const bodyParser = require("body-parser");
+const fs = require('fs')
+var mysql = require('mysql');
+var personarray = new Array();
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "person"
+});
+var con2 = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "person"
+});
+var con3 = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "person"
+});
+var con4 = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "person"
+});
+var finduser = function (id, callback) {
+  personarray.forEach((element, index, array) => {
+    if(element.id == id){
+    console.log(element.id);
+    return callback(null, element);
+    }
+  });
+};
+
+
+con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * FROM users", function (err, result, fields) {
+    if (err) throw err;
+    personarray = result
+  });
+});
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
+
+app.post("/index.js", function (req, res) {
+  const personiNFO = req.body
+  console.log(req)
+  console.log(req.body)
+  res.end(personiNFO)
+});
+
+
+app.post('/user', (req, res)=>{
+const id = req.body.id 
+const name = req.body.name
+const status = req.body.status
+const address = req.body.status
+con2.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+  var sql = "INSERT INTO `users` (`name`, `address`,`status`,`id`) VALUES ('"+name+"','"+ address+"','"+status+"','"+id+"')";
+   con2.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+});
+}); 
+
+app.get('/users', (req, res)=>{
+  res.header('Content-Type', 'application/json')
+  res.send(JSON.stringify(personarray))
+}); 
+
+app.get('/users/:id', (req, res)=>{
+  var id = req.params.id;
+  finduser(id, function(error, id) {
+    if (error) return next(error);
+     res.send(id);
+  });
+}); 
+
 app.get('/', (req, res)=>{
-    res.render('index.ejs');
+  fs.readFile('./index.html', function (err, html) {
+    if (err) {
+        throw err; 
+    }       
+        res.writeHeader(200, {"Content-Type": "text/html"});  
+        res.write(html);  
+        res.end();  
 });
-app.get('/register', (req, res)=>{
-    res.render('register.ejs');
-});
-app.get('/login', (req, res)=>{
-    res.render('login.ejs');
-});
-app.listen(port, () => {
-    console.log("server created");
-});
+
+}); 
+ const getobject = (ids, callback)=>{
+   return con4.connect(function(err) {
+    if (err) throw err;
+    con4.query("SELECT * FROM users WHERE id = ('"+ids.id+"')", function (err, result, fields) {
+      if (err) throw err;
+      return callback(null, result[0]);
+    });
+  });
+}
+app.put('/user/:id/:status', function (req, res) {
+      var data = []
+
+  var id = req.params.id;
+  var Status = req.params.status;
+  finduser(id, function(error, id) {
+    if (error) return next(error);
+    con3.connect(function(err) {
+      if (err) throw err;
+      var sql = "UPDATE users SET status = ('"+Status+"') WHERE id = ('"+id.id+"')";
+      con3.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result.affectedRows + " record(s) updated");
+
+        getobject(id, function(error, id) {
+          if (error) return next(error);
+          res.header('Content-Type', 'application/json')
+           res.send(JSON.stringify(id));
+        });
+      
+
+
+
+
+      });
+    });
+    
+
+  });
+
+  
+}); 
+
+
+app.listen(3000) 
